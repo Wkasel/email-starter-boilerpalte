@@ -1,25 +1,24 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<!--
-***************************************************
-********************************************************
-HOW TO USE: Use these code examples as a guideliasdfne for formatting your HTML email. You may want to create your own template based on these snippets or just pick and choose the ones that fix your specific rendering issue(s). There are two main areas in the template: 1. The header (head) area of the document. You will find global styles, where indicated, to move inline. 2. The body section contains more specific fixes and guidance to use where needed in your design.
-DO NOT COPY OVER COMMENTS AND INSTRUCTIONS WITH THE CODE to your message or risk spam box banishment :).
-It is important to note that sometimes the styles in the header area should not be or don't need to be brought inline. Those instances will be marked accordingly in the comments.
-********************************************************
-****************************************************
--->
-<!--
-Using the xHTML doctype is a good practice when sending HTML email. While not the only doctype you can use, it seems to have the least inconsistencies. For more information on which one may work best for you, check out the resources below.
-UPDATED: Now using xHTML strict based on the fact that gmail and hotmail uses it.  Find out more about that, and another great boilerplate, here: http://www.emailology.org/#1
-More info/Reference on doctypes in email:
-Campaign Monitor - http://www.campaignmonitor.com/blog/post/3317/correct-doctype-to-use-in-html-email/
-Email on Acid - http://www.emailonacid.com/blog/details/C18/doctype_-_the_black_sheep_of_html_email_design
--->
-<head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Your Message Subject or Title</title>
-  <style type="text/css">
+doctype strict
+//
+  ***************************************************
+  ********************************************************
+  HOW TO USE: Use these code examples as a guideliasdfne for formatting your HTML email. You may want to create your own template based on these snippets or just pick and choose the ones that fix your specific rendering issue(s). There are two main areas in the template: 1. The header (head) area of the document. You will find global styles, where indicated, to move inline. 2. The body section contains more specific fixes and guidance to use where needed in your design.
+  DO NOT COPY OVER COMMENTS AND INSTRUCTIONS WITH THE CODE to your message or risk spam box banishment :).
+  It is important to note that sometimes the styles in the header area should not be or don't need to be brought inline. Those instances will be marked accordingly in the comments.
+  ********************************************************
+  ****************************************************
+//
+  Using the xHTML doctype is a good practice when sending HTML email. While not the only doctype you can use, it seems to have the least inconsistencies. For more information on which one may work best for you, check out the resources below.
+  UPDATED: Now using xHTML strict based on the fact that gmail and hotmail uses it.  Find out more about that, and another great boilerplate, here: http://www.emailology.org/#1
+  More info/Reference on doctypes in email:
+  Campaign Monitor - http://www.campaignmonitor.com/blog/post/3317/correct-doctype-to-use-in-html-email/
+  Email on Acid - http://www.emailonacid.com/blog/details/C18/doctype_-_the_black_sheep_of_html_email_design
+head
+  meta(http-equiv='Content-Type' content='text/html; charset=utf-8')
+  meta(name='viewport' content='width=device-width, initial-scale=1.0')
+  title Your Message Subject or Title
+  link(rel="stylesheet",href="../styles/style.scss")
+  style(type='text/css').
     /***********
     Originally based on The MailChimp Reset from Fabio Carneiro, MailChimp User Experience Design
     More info and templates on Github: https://github.com/mailchimp/Email-Blueprints
@@ -141,39 +140,33 @@ Email on Acid - http://www.emailonacid.com/blog/details/C18/doctype_-_the_black_
     /* Put CSS for high density (hdpi) Android layouts in here */
     }
     /* end Android targeting */
-  </style>
-  <!-- Targeting Windows Mobile-->
-  <!--if IEMobile 7style(type='text/css').
-  -->
-  <!--
-  ***********************************************
-  ****************************************************
-  END MOBILE TARGETING
-  ****************************************************
-  ************************************************
-  -->
-  <!--if gte mso 9
-  style.
-    /* Target Outlook 2007 and 2010 */
-  -->
-</head>
-<!-- Wrapper/Container Table: Use a wrapper table to control the width and the background color consistently of your email. Use this approach instead of setting attributes on the body tag.-->
-<table id="backgroundTable" cellpadding="0" cellspacing="0" border="5">
-  <tr>
-    <td>
-      <!-- Tables are the most common way to format your email consistently. Set your table widths inside cells and in most cases reset cellpadding, cellspacing, and border to zero. Use nested tables as a way to space effectively in your message.-->
-      <table cellpadding="0" cellspacing="0" border="0" align="center">
-        <tr>
-          <td width="33.3%" valign="top"></td>
-          <td width="33.3%" valign="top"></td>
-          <td width="33.3%" valign="top"></td>
-        </tr>
-      </table>
-      <!-- End example table-->
-      <!-- Yahoo Link color fix updated: Simply bring your link styling inline.--><a href="http://htmlemailboilerplate.com" target="_blank" title="Styling Links" style="color: orange; text-decoration: none;">Coloring Links appropriately</a>
-      <!-- Gmail/Hotmail image display fix: Gmail and Hotmail unwantedly adds in an extra space below images when using non IE browsers.  This can be especially painful when you putting images on top of each other or putting back together an image you spliced for formatting reasons.  Either way, you can add the 'image_fix' class to remove that space below the image.  Make sure to set alignment (don't use float) on your images if you are placing them inline with text.--><img class="image_fix" src="https://via.placeholder.com/300x100" alt="Your alt text" title="Your title text" width="x" height="x"/>
-      <!-- Step 2: Working with telephone numbers (including sms prompts).  Use the "mobile_link" class with a span tag to control what number links and what doesn't in mobile clients.--><span class="mobile_link">123-456-7890</span>
-    </td>
-  </tr>
-</table>
-<!-- End of wrapper table-->
+  // Targeting Windows Mobile
+  //if IEMobile 7
+    style(type='text/css').
+  //
+    ***********************************************
+    ****************************************************
+    END MOBILE TARGETING
+    ****************************************************
+    ************************************************
+  //if gte mso 9
+    style.
+      /* Target Outlook 2007 and 2010 */
+// Wrapper/Container Table: Use a wrapper table to control the width and the background color consistently of your email. Use this approach instead of setting attributes on the body tag.
+table#backgroundTable(cellpadding='0' cellspacing='0' border='5')
+  tr
+    td
+      // Tables are the most common way to format your email consistently. Set your table widths inside cells and in most cases reset cellpadding, cellspacing, and border to zero. Use nested tables as a way to space effectively in your message.
+      table(cellpadding='0' cellspacing='0' border='0' align='center')
+        tr
+          td(width='33.3%' valign='top')
+          td(width='33.3%' valign='top')
+          td(width='33.3%' valign='top')
+      // End example table
+      // Yahoo Link color fix updated: Simply bring your link styling inline.
+      a(href='http://htmlemailboilerplate.com' target='_blank' title='Styling Links' style='color: orange; text-decoration: none;') Coloring Links appropriately
+      // Gmail/Hotmail image display fix: Gmail and Hotmail unwantedly adds in an extra space below images when using non IE browsers.  This can be especially painful when you putting images on top of each other or putting back together an image you spliced for formatting reasons.  Either way, you can add the 'image_fix' class to remove that space below the image.  Make sure to set alignment (don't use float) on your images if you are placing them inline with text.
+      img.image_fix(src='https://via.placeholder.com/300x100' alt='Your alt text' title='Your title text' width='x' height='x')
+      // Step 2: Working with telephone numbers (including sms prompts).  Use the "mobile_link" class with a span tag to control what number links and what doesn't in mobile clients.
+      span.mobile_link 123-456-7890
+// End of wrapper table

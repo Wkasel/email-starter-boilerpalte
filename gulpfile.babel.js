@@ -5,15 +5,14 @@
 import gulp from 'gulp';
 import sass from 'gulp-sass';
 import pug from 'gulp-pug';
-import gulpWatchPug from 'gulp-watch-pug';
-import watch from 'gulp-watch';
 import autoprefixer from 'gulp-autoprefixer';
 import plumber from 'gulp-plumber';
 import del from 'del';
-// import browsersync from 'browser-sync';
+import replace from 'gulp-replace';
+import htmlmin from 'gulp-html-minifier';
 import rename from 'gulp-rename';
-import inline from 'gulp-inline-css';
-const browsersync = require('browser-sync').create();
+import inlineCss from 'gulp-inline-css';
+const browserSync = require('browser-sync').create();
 // const bsync = browsersync.create();
 
 const dirs = {
@@ -26,84 +25,102 @@ const dirs = {
     dest: './build',
 };
 
-// BrowserSync
-function browserSync(done) {
-    browsersync.init({
-        server: {
-            baseDir: dirs.dest,
-            directory: true,
-        },
-        port: 3000,
+function clean() {
+    return del(['./build']);
+}
+
+const bsync = () =>
+    browserSync.init({
+        reloadDelay: 2000,
+        server: { baseDir: dirs.dest },
     });
-    done();
-}
 
-// BrowserSync Reload
-function browserSyncReload(done) {
-    browsersync.reload();
-    done();
-}
-
-const clean = () => del([`${dirs.dest}`]);
+// task to reload browserSync
+const reloadBrowserSync = () => browserSync.reload();
 
 const css = () => {
-    return (
-        gulp
-            .src(`${dirs.src.dir}/${dirs.src.style}/style.scss`)
-            .pipe(plumber())
-            // .pipe(sass.sync().on('error', onError))
-            .pipe(sass({ outputStyle: 'expanded' }))
-            .pipe(gulp.dest(`${dirs.dest}/styles`))
-            .pipe(rename({ suffix: '.min' }))
-            .pipe(autoprefixer())
-            .pipe(gulp.dest(dirs.dest))
-            .pipe(browsersync.stream())
-    );
+    return gulp
+        .src(`${dirs.src.dir}/${dirs.src.style}/style.scss`)
+        .pipe(plumber())
+        .pipe(sass().on('error', sass.logError))
+        .pipe(sass({ outputStyle: 'expanded' }))
+        .pipe(gulp.dest(`${dirs.src.dir}/css`))
+        .pipe(rename({ suffix: '.min' }))
+        .pipe(autoprefixer())
+        .pipe(gulp.dest(`${dirs.src.dir}/css`));
+    // .pipe(browsersync.stream());
 };
 
-const tmpl = () => {
+const html = () => {
     return gulp
-        .src(`${dirs.src.dir}/${dirs.src.tmpl}/email.pug`)
-        .pipe(pug({ doctype: 'html', pretty: true }))
-        .pipe(gulp.dest(dirs.dest))
-        .pipe(browsersync.stream());
+        .src(`${dirs.src.dir}/${dirs.src.tmpl}/*.pug`)
+        .pipe(sass().on('error', e => console.log(e)))
+        .pipe(replace(new RegExp('/sass/(.+).scss', 'ig'), '/css/$1.css'))
+        .pipe(pug()) //{ doctype: 'html', pretty: true }
+        .pipe(
+            inlineCss({
+                applyStyleTags: true,
+                applyLinkTags: true,
+                removeLinkTags: false,
+                preserveMediaQueries: true,
+                applyWidthAttributes: true,
+                applyTableAttributes: true,
+                preserveImportant: true,
+                // removeStyleTags: true,
+                // removeLinkTags: true,
+            })
+        )
+        .pipe(rename({ dirname: '' }))
+        .pipe(gulp.dest(dirs.dest));
 };
-const inlineStyles = () => {
-    return gulp.src(`${dirs.dest}/email.html`).pipe(
-        inline({
-            applyStyleTags: true,
-            applyLinkTags: true,
-            removeStyleTags: true,
-            removeLinkTags: true,
-        }).pipe(gulp.dest('build/'))
-    );
+
+const minify = () => {
+    return gulp
+        .src(`${dirs.dest}/*.html`)
+        .pipe(
+            htmlmin({
+                removeAttributeQuotes: true,
+                collapseWhitespace: true,
+                removeComments: true,
+                removeOptionalTags: true,
+                removeScriptTypeAttributes: true,
+                useShortDoctype: true,
+                minifyCSS: true,
+                html5: true,
+                keepClosingSlash: true,
+            })
+        )
+        .pipe(rename(path => (path.basename += '.min')))
+        .pipe(gulp.dest('build'));
 };
+const lite = () => {
+    return gulp
+        .src(`${dirs.dest}/*.html`)
+        .pipe(sass().on('error', e => console.log(e)))
+        .pipe(
+            htmlmin({
+                removeComments: true,
+                useShortDoctype: true,
+                html5: true,
+                keepClosingSlash: true,
+                conservativeCollapse: true,
+                minifyCSS: true,
+            })
+        )
+        .pipe(rename(path => (path.basename += '.light')))
+        .pipe(gulp.dest('build'));
+};
+
+const build = gulp.series(css, html, lite);
 
 const watchFiles = () => {
-    // gulp.watch(`${dirs.src.dir}/${dirs.src.style}/**/*.scss`, css).on(
-    //     'change',
-    //     browserSyncReload
-    // );
-    // gulp.watch(`${dirs.src.dir}/${dirs.src.tmpl}/**/*.pug`, tmpl).on(
-    //     'change',
-    //     browserSyncReload
-    // );
+    gulp.watch(`./src/styles/*.scss`, css);
     gulp.watch(
-        `${dirs.src.dir}/${dirs.src.styles}`,
-        gulp.series(build, browserSyncReload)
-    ).on('change', browsersync.reload);
-    gulp.watch(
-        `${dirs.src.dir}/${dirs.src.tmpl}`,
-        gulp.series(build, browserSyncReload)
-    ).on('change', browsersync.reload);
+        `./src/tmpl/*.pug`,
+        gulp.series(html, minify, lite, build, reloadBrowserSync)
+    );
 };
-
-const build = gulp.series(clean, gulp.parallel(css, tmpl), inlineStyles);
-const watcher = gulp.parallel(watchFiles, browserSync);
-
-exports.css = css;
-exports.tmpl = tmpl;
-exports.clean = clean;
-exports.build = build;
-exports.watch = watcher;
-exports.default = build;
+gulp.task('clean', clean);
+gulp.task('build', gulp.series(clean, build));
+gulp.task('default', gulp.series(clean, build));
+gulp.task('watch', gulp.series(bsync, watchFiles));

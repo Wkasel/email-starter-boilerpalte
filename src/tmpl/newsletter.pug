@@ -1,0 +1,393 @@
+doctype html
+head
+  meta(charset='utf-8')
+  // utf-8 works for most cases
+  meta(name='viewport' content='width=device-width')
+  // Forcing initial-scale shouldn't be necessary
+  meta(http-equiv='X-UA-Compatible' content='IE=edge')
+  // Use the latest (edge) version of IE rendering engine
+  meta(name='x-apple-disable-message-reformatting')
+  // Disable auto-scale in iOS 10 Mail entirely
+  meta(name='format-detection' content='telephone=no,address=no,email=no,date=no,url=no')
+  // Tell iOS not to automatically link certain text strings.
+  title
+  // The title tag shows in email notifications, like Android 4.4.
+  // Web Font / @font-face : BEGIN
+  // NOTE: If web fonts are not required, lines 10 - 27 can be safely removed.
+  // Desktop Outlook chokes on web font references and defaults to Times New Roman, so we force a safe fallback font.
+  //if mso
+    style.
+      * {
+      font-family: sans-serif !important;
+      }
+  // All other clients get the webfont reference; some will render the font and others will silently fail to the fallbacks. More on that here: http://stylecampaign.com/blog/2015/02/webfont-support-in-email/
+  // [if !mso] <!
+  // insert web font reference, eg: <link href='https://fonts.googleapis.com/css?family=Roboto:400,700' rel='stylesheet' type='text/css'>
+  // <![endif]
+  // Web Font / @font-face : END
+  // CSS Reset : BEGIN
+  style(data-embed).
+    /* What it does: Remove spaces around the email design added by some email clients. */
+    /* Beware: It can remove the padding / margin and add a background color to the compose a reply window. */
+    html,
+    body {
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 100% !important;
+    width: 100% !important;
+    }
+    /* What it does: Stops email clients resizing small text. */
+    * {
+    -ms-text-size-adjust: 100%;
+    -webkit-text-size-adjust: 100%;
+    }
+    /* What it does: Centers email on Android 4.4 */
+    div[style*="margin: 16px 0"] {
+    margin: 0 !important;
+    }
+    /* What it does: Stops Outlook from adding extra spacing to tables. */
+    table,
+    td {
+    mso-table-lspace: 0pt !important;
+    mso-table-rspace: 0pt !important;
+    }
+    /* What it does: Replaces default bold style. */
+    th {
+    font-weight: normal;
+    }
+    /* What it does: Fixes webkit padding issue. */
+    table {
+    border-spacing: 0 !important;
+    border-collapse: collapse !important;
+    table-layout: fixed !important;
+    margin: 0 auto !important;
+    }
+    /* What it does: Prevents Windows 10 Mail from underlining links despite inline CSS. Styles for underlined links should be inline. */
+    a {
+    text-decoration: none;
+    }
+    /* What it does: Uses a better rendering method when resizing images in IE. */
+    img {
+    -ms-interpolation-mode:bicubic;
+    }
+    /* What it does: A work-around for email clients meddling in triggered links. */
+    a[x-apple-data-detectors],  /* iOS */
+    .unstyle-auto-detected-links a,
+    .aBn {
+    border-bottom: 0 !important;
+    cursor: default !important;
+    color: inherit !important;
+    text-decoration: none !important;
+    font-size: inherit !important;
+    font-family: inherit !important;
+    font-weight: inherit !important;
+    line-height: inherit !important;
+    }
+    /* What it does: Prevents Gmail from changing the text color in conversation threads. */
+    .im {
+    color: inherit !important;
+    }
+    /* What it does: Prevents Gmail from displaying a download button on large, non-linked images. */
+    .a6S {
+    display: none !important;
+    opacity: 0.01 !important;
+    }
+    /* If the above doesn't work, add a .g-img class to any image in question. */
+    img.g-img + div {
+    display: none !important;
+    }
+    /* What it does: Removes right gutter in Gmail iOS app: https://github.com/TedGoas/Cerberus/issues/89  */
+    /* Create one of these media queries for each additional viewport size you'd like to fix */
+    /* iPhone 4, 4S, 5, 5S, 5C, and 5SE */
+    @media only screen and (min-device-width: 320px) and (max-device-width: 374px) {
+    u ~ div .email-container {
+    min-width: 320px !important;
+    }
+    }
+    /* iPhone 6, 6S, 7, 8, and X */
+    @media only screen and (min-device-width: 375px) and (max-device-width: 413px) {
+    u ~ div .email-container {
+    min-width: 375px !important;
+    }
+    }
+    /* iPhone 6+, 7+, and 8+ */
+    @media only screen and (min-device-width: 414px) {
+    u ~ div .email-container {
+    min-width: 414px !important;
+    }
+    }
+  // What it does: Makes background images in 72ppi Outlook render at correct size.
+  //if gte mso 9
+    xml
+      o:officedocumentsettings
+        o:allowpng
+          o:pixelsperinch 96
+  // CSS Reset : END
+  // Progressive Enhancements : BEGIN
+  style.
+    /* What it does: Hover styles for buttons */
+    .button-td,
+    .button-a {
+    transition: all 100ms ease-in;
+    }
+    .button-td-primary:hover,
+    .button-a-primary:hover {
+    background: #555555 !important;
+    border-color: #555555 !important;
+    }
+    /* Media Queries */
+    @media screen and (max-width: 600px) {
+    .email-container {
+    width: 100% !important;
+    margin: auto !important;
+    }
+    /* What it does: Forces table cells into full-width rows. */
+    .stack-column,
+    .stack-column-center {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    direction: ltr !important;
+    }
+    /* And center justify these ones. */
+    .stack-column-center {
+    text-align: center !important;
+    }
+    /* What it does: Generic utility class for centering. Useful for images, buttons, and nested tables. */
+    .center-on-narrow {
+    text-align: center !important;
+    display: block !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    float: none !important;
+    }
+    table.center-on-narrow {
+    display: inline-block !important;
+    }
+    /* What it does: Adjust typography on small screens to improve readability */
+    .email-container p {
+    font-size: 17px !important;
+    }
+    }
+  //if (IE) | lt mso 9
+    style(data-embed='').
+      body {
+      background: #000 !important;
+      color: #fff;
+      }
+  // Progressive Enhancements : END
+//
+  The email background color (#222222) is defined in three places:
+  1. body tag: for most email clients
+  2. center tag: for Gmail and Inbox mobile apps and web versions of Gmail, GSuite, Inbox, Yahoo, AOL, Libero, Comcast, freenet, Mail.ru, Orange.fr
+  3. mso conditional: For Windows 10 Mail
+center(style="width: 100%; background: url('https://gallery.mailchimp.com/dc1212dfdae9566e2cafb9ecd/images/5305b49a-99b0-43df-9d0e-9da3a6320466.png') no-repeat, #F2F2F2; background-size: 100%; background-color: #f2f2f2; background-attachment: local;")
+  table(cellpadding='0' cellspacing='0' border='0' width='100%')
+    tr
+      td(valign='top')
+        //if gte mso 9
+          v:rect(xmlns:v='urn:schemas-microsoft-com:vml' fill='true' stroke='false' style='mso-width-percent:1000;')
+            v:fill(type='frame' src='https://gallery.mailchimp.com/dc1212dfdae9566e2cafb9ecd/images/5305b49a-99b0-43df-9d0e-9da3a6320466.png' size='100%,100%')
+              v:textbox(style='mso-fit-shape-to-text:true' inset='0,0,0,0')
+        div
+          // Visually Hidden Preheader Text : BEGIN
+          div(style='display: none; font-size: 1px; line-height: 1px; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden; mso-hide: all; font-family: sans-serif;')
+            | (Optional) This text will appear in the inbox preview, but not the email body. It can be used to supplement the email subject line or even summarize the email&apos;s contents. Extended text preheaders (~490 characters) seems like a better UX for anyone using a screenreader or voice-command apps like Siri to dictate the contents of an email. If this text is not included, email clients will automatically populate it using the text (including image alt text) at the start of the email&apos;s body.
+          // Visually Hidden Preheader Text : END
+          // Create white space after the desired preview text so email clients don’t pull other distracting text into the inbox preview. Extend as necessary.
+          // Preview Text Spacing Hack : BEGIN
+          div(style='display: none; font-size: 1px; line-height: 1px; max-height: 0px; max-width: 0px; opacity: 0; overflow: hidden; mso-hide: all; font-family: sans-serif;')
+            | &zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
+          // Preview Text Spacing Hack : END
+          // Email Body : BEGIN
+          table.email-container(align='center' role='presentation' cellspacing='0' cellpadding='0' border='0' width='600' style='margin: auto;')
+            // Email Header : BEGIN
+            tr
+              td(style='padding: 20px 0; text-align: center')
+                a(href='https://bolt.com')
+                  img(src='https://www.bolt.com/wp-content/uploads/2019/10/logo-03-1.png' width='225' height='60' alt='placeholder')
+            // Email Header : END
+            // Hero Image, Flush : BEGIN
+            // Hero Image, Flush : END
+            // 1 Column Text + Button : BEGIN
+            tr
+              td(style='background-color: #ffffff;-webkit-box-shadow: 10px 10px 33px -39px rgba(0,0,0,1);-moz-box-shadow: 10px 10px 33px -39px rgba(0,0,0,1);box-shadow: 10px 10px 33px -39px rgba(0,0,0,1);border-radius: 10px 10px 10px 10px;-moz-border-radius: 10px 10px 10px 10px;-webkit-border-radius: 10px 10px 10px 10px;border: 0px solid #ffffff;')
+                table(role='presentation' cellspacing='0' cellpadding='0' border='0' width='100%')
+                  tr
+                    td(style='padding: 20px; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555;')
+                      img.g-img(alt='placeholder' src='https://gallery.mailchimp.com/516b4517657af435db27ba7b9/images/b237e8d0-70c6-4941-9fef-201be12caebb.png' style='width: 100%; max-width: 600px; height: auto; background: #dddddd; font-family: sans-serif; font-size: 15px; line-height: 15px; color: #555555; margin: auto; display: block;')
+                      br
+                      p(style='margin: 0 0 10px;') Hey %FULLNAME%,
+                      p(style='margin: 0 0 10px;')
+                        | Thanks again for choosing to learn about the perfect online checkout, we&rsquo;re so excited to share what we&rsquo;ve found!
+                      p(style='margin: 0 0 10px;')
+                        | As you may be aware, there are multiple challenges facing online retailers today including:
+                      ul(style='padding: 0; margin: 0; list-style-type: disc;')
+                        li.list-item-first(style='margin:0 0 10px 20px;')
+                          | An increased demand for buying experiences that are both ultra convenient and seamless
+                        li(style='margin:0 0 10px 20px;')
+                          | Technological fragmentation, forcing retailers to patch together multiple solutions to deliver a cohesive experience
+                        li.list-item-last(style='margin: 0 0 0 20px;') The need for increased resources to purchase technology to offer said experience
+                      p(style='margin: 0 0 10px;') Bolt is on a mission to change that.
+                      p(style='margin: 0 0 10px;')
+                        | We help online retailers perfect their checkout experience so that they can focus on what matters most -- delighting their customers. Take a peak at the resources we&apos;ve included below, more will be coming over the next few weeks.
+                      p(style='margin: 0 0 10px;') Cheers!
+                  tr
+                    td(style='padding: 0 20px 20px;')
+            // 1 Column Text + Button : END
+            tr
+              td(valign='middle' style='padding-top: 50px; text-align: Left; font-family: sans-serif; font-size: 24px; line-height: 48px;')
+                h2(style='margin: 0; font-size: 16px; color: #707070;') From The Blog
+            // Background Image with Text : END
+            // Thumbnail Left, Text Right : BEGIN
+            tr
+              td(dir='ltr' width='100%' style='padding: 10px; background-color: #ffffff;-webkit-box-shadow: 10px 10px 33px -39px rgba(0,0,0,1);-moz-box-shadow: 10px 10px 33px -39px rgba(0,0,0,1);box-shadow: 10px 10px 33px -39px rgba(0,0,0,1);border-radius: 10px 10px 10px 10px;-moz-border-radius: 10px 10px 10px 10px;-webkit-border-radius: 10px 10px 10px 10px;border: 0px solid #ffffff;')
+                table(role='presentation' border='0' cellpadding='0' cellspacing='0' width='100%')
+                  tr
+                    // Column : BEGIN
+                    th.stack-column-center(width='50%')
+                      table(role='presentation' border='0' cellpadding='0' cellspacing='0' width='100%')
+                        tr
+                          td(dir='ltr' valign='top' style='padding: 0 10px;')
+                            //if gte MSO 9
+                              table(width='640')
+                                tr
+                                  td
+                            table(width='100%' style='max-width:640px;')
+                              tr
+                                td
+                                  img.center-on-narrow(src='https://via.placeholder.com/400x100' width='100%' alt='alt_text' border='0')
+                            //if gte MSO 9
+                    // Column : END
+                    // Column : BEGIN
+                    th.stack-column-center(width='50%')
+                      table(role='presentation' border='0' cellpadding='0' cellspacing='0' width='100%')
+                        tr
+                          td.center-on-narrow(dir='ltr' valign='top' style='font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555; padding: 10px; text-align: left;')
+                            h2(style='margin: 0 0 10px 0; font-family: sans-serif; font-size: 16px; line-height: 22px; color: #000000; font-weight: bold;') Creating an optimized express checkout for success
+                            // Button : BEGIN
+                            table.center-on-narrow(role='presentation' cellspacing='0' cellpadding='0' border='0' style='float:right;')
+                              tr
+                                td
+                                  a(href='https://google.com/') Read More &rarr;
+                            // Button : END
+                    // Column : END
+            // Thumbnail Left, Text Right : END
+            // Clear Spacer : BEGIN
+            tr
+              td(aria-hidden='true' height='40' style='font-size: 0px; line-height: 0px;')
+            // Clear Spacer : END
+            // Thumbnail Left, Text Right : BEGIN
+            tr
+              td(dir='ltr' width='100%' style='padding: 10px; background-color: #ffffff;-webkit-box-shadow: 10px 10px 33px -39px rgba(0,0,0,1);-moz-box-shadow: 10px 10px 33px -39px rgba(0,0,0,1);box-shadow: 10px 10px 33px -39px rgba(0,0,0,1);border-radius: 10px 10px 10px 10px;-moz-border-radius: 10px 10px 10px 10px;-webkit-border-radius: 10px 10px 10px 10px;border: 0px solid #ffffff;')
+                table(role='presentation' border='0' cellpadding='0' cellspacing='0' width='100%')
+                  tr
+                    // Column : BEGIN
+                    th.stack-column-center(width='50%')
+                      table(role='presentation' border='0' cellpadding='0' cellspacing='0' width='100%')
+                        tr
+                          td(dir='ltr' valign='top' style='padding: 0 10px;')
+                            //if gte MSO 9
+                              table(width='640')
+                                tr
+                                  td
+                            table(width='100%' style='max-width:640px;')
+                              tr
+                                td
+                                  img.center-on-narrow(src='https://via.placeholder.com/400x100' width='100%' alt='alt_text' border='0')
+                            //if gte MSO 9
+                    // Column : END
+                    // Column : BEGIN
+                    th.stack-column-center(width='50%')
+                      table(role='presentation' border='0' cellpadding='0' cellspacing='0' width='100%')
+                        tr
+                          td.center-on-narrow(dir='ltr' valign='top' style='font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555; padding: 10px; text-align: left;')
+                            h2(style='margin: 0 0 10px 0; font-family: sans-serif; font-size: 16px; line-height: 22px; color: #000000; font-weight: bold;') Creating an optimized express checkout for success
+                            // Button : BEGIN
+                            table.center-on-narrow(role='presentation' cellspacing='0' cellpadding='0' border='0' style='float:right;')
+                              tr
+                                td
+                                  a(href='https://google.com/') Read More &rarr;
+                            // Button : END
+                    // Column : END
+            // Thumbnail Left, Text Right : END
+            // Clear Spacer : BEGIN
+            tr
+              td(aria-hidden='true' height='40' style='font-size: 0px; line-height: 0px;')
+            // Clear Spacer : END
+            // Thumbnail Left, Text Right : BEGIN
+            tr
+              td(dir='ltr' width='100%' style='padding: 10px; background-color: #ffffff;-webkit-box-shadow: 10px 10px 33px -39px rgba(0,0,0,1);-moz-box-shadow: 10px 10px 33px -39px rgba(0,0,0,1);box-shadow: 10px 10px 33px -39px rgba(0,0,0,1);border-radius: 10px 10px 10px 10px;-moz-border-radius: 10px 10px 10px 10px;-webkit-border-radius: 10px 10px 10px 10px;border: 0px solid #ffffff;')
+                table(role='presentation' border='0' cellpadding='0' cellspacing='0' width='100%')
+                  tr
+                    // Column : BEGIN
+                    th.stack-column-center(width='50%')
+                      table(role='presentation' border='0' cellpadding='0' cellspacing='0' width='100%')
+                        tr
+                          td(dir='ltr' valign='top' style='padding: 0 10px;')
+                            //if gte MSO 9
+                              table(width='640')
+                                tr
+                                  td
+                            table(width='100%' style='max-width:640px;')
+                              tr
+                                td
+                                  img.center-on-narrow(src='https://via.placeholder.com/400x100' width='100%' alt='alt_text' border='0')
+                            //if gte MSO 9
+                    // Column : END
+                    // Column : BEGIN
+                    th.stack-column-center(width='50%')
+                      table(role='presentation' border='0' cellpadding='0' cellspacing='0' width='100%')
+                        tr
+                          td.center-on-narrow(dir='ltr' valign='top' style='font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555; padding: 10px; text-align: left;')
+                            h2(style='margin: 0 0 10px 0; font-family: sans-serif; font-size: 16px; line-height: 22px; color: #000000; font-weight: bold;') Creating an optimized express checkout for success
+                            // Button : BEGIN
+                            table.center-on-narrow(role='presentation' cellspacing='0' cellpadding='0' border='0' style='float:right;')
+                              tr
+                                td
+                                  a(href='https://google.com/') Read More &rarr;
+                            // Button : END
+                    // Column : END
+            // Thumbnail Left, Text Right : END
+            // Clear Spacer : BEGIN
+            tr
+              td(aria-hidden='true' height='40' style='font-size: 0px; line-height: 0px;')
+            // Clear Spacer : END
+            // 1 Column Text : BEGIN
+            tr
+              td(style='padding: 20px; background-color: #ffffff;-webkit-box-shadow: 10px 10px 33px -39px rgba(0,0,0,1);-moz-box-shadow: 10px 10px 33px -39px rgba(0,0,0,1);box-shadow: 10px 10px 33px -39px rgba(0,0,0,1);border-radius: 10px 10px 10px 10px;-moz-border-radius: 10px 10px 10px 10px;-webkit-border-radius: 10px 10px 10px 10px;border: 0px solid #ffffff;')
+                table(role='presentation' cellspacing='0' cellpadding='0' border='0' width='100%')
+                  tr
+                    td(style='padding: 10px; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555; text-align: center;')
+                      p
+                        | Follow us and view more resources at 
+                        a(href='http://bolt.com') Bolt.com
+                  tr
+                    td(style='padding: 10px; font-family: sans-serif; font-size: 15px; line-height: 20px; color: #555555; text-align: center;')
+                      a(href='https://www.facebook.com/boltpay/' style='text-decoration: none; color: #fff;')
+                        img(src='https://www.bolt.com/wp-content/uploads/2019/10/iconfinder_2018_social_media_popular_app_logo_facebook_3228552-1.png' alt='Facebook' width='20' height='20' border='0')
+                      a(href='https://twitter.com/bolt' style='text-decoration: none; color: #fff;')
+                        img(src='https://www.bolt.com/wp-content/uploads/2019/10/92095526-0d69-4408-9b1f-07cd1fc0c734.png' alt='Twitter' width='20' height='20' border='0')
+                      a(href='https://www.linkedin.com/company/bolt-com/' style='text-decoration: none; color: #fff;')
+                        img(src='https://www.bolt.com/wp-content/uploads/2019/10/iconfinder_2018_social_media_popular_app_logo_linkedin_3228550-1.png' alt='Linkedin' width='20' height='20' border='0')
+                  tr
+                    td(style='font-family: sans-serif;font-size: 12px; line-height: 24px;color: #B3B3B3')
+                      p(style='font-family: sans-serif;font-size: 12px; line-height: 24px;color: #B3B3B3')
+                        | You&rsquo;re receiving this email because you signed up to learn more about Bolt&rsquo;s mission to perfect online checkout and you provided Bolt with your email address. We don&rsquo;t want to see you go, but if you no longer wish to receive emails from us, please click unsubscribe. Please do not click REPLY, as the email will not be read.
+                  tr
+                    td(style='text-align: justify;text-justify: inter-word;font-family: sans-serif;font-size: 12px; line-height: 24px;color: #B3B3B3')
+                      p(style='text-align: justify;text-justify: inter-word; font-family: sans-serif;font-size: 12px; line-height: 24px;color: #B3B3B3')
+                        a(href='#' style='color: #B3B3B3;text-decoration: underline;') Privacy Statement
+                        |  | 
+                        a(href='#' style='color: #B3B3B3;text-decoration: underline;') Terms and Conditions
+                      p(style='font-family: sans-serif;text-align: justify;text-justify: inter-word;font-size: 12px; line-height: 24px;color: #B3B3B3')
+                        | &copy; 2019 Bolt Financial Inc. | All rights reserved. | Bolt, 77 Geary St., San Francisco, CA 94108
+            // 1 Column Text : END
+          // Email Body : END
+          // Email Footer : BEGIN
+          table.email-container(align='center' role='presentation' cellspacing='0' cellpadding='0' border='0' width='600' style='margin: auto;')
+            tr
+              td(style='padding: 20px; font-family: sans-serif; font-size: 12px; line-height: 15px; text-align: center; color: #888888;')
+                unsubscribe(style='color: #888888; text-decoration: underline;') unsubscribe
+        //if (gte mso 9)|(IE)
+  // Email Footer : END
